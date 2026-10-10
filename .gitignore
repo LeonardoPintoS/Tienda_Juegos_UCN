@@ -1,0 +1,34 @@
+# Entorno virtual
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Variables de entorno secreto
+.env
+.env.local
+.env.example
+
+# Base de datos
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Archivos generados en la ejecución
+media/
+outbox/
+receipts/
+logs/
+
+# Editores y sistemas operativos
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Ruff y mypy cache
+__ruff_cache__/
+.mypy_cache/
+.pytest_cache/
