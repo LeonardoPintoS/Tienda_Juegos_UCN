@@ -11,26 +11,26 @@ from app.core.time import utcnow
 
 
 class Game(SQLModel, table=True):
-    """A title in the catalog.
+    """Un título en el catálogo.
 
-    Soft-deleted via `deleted_at`; `is_active` is a separate, admin-controlled
-    switch (a game can be inactive without being deleted, e.g. temporarily
-    pulled from sale). The public catalog (Fase 3) requires both
-    `is_active = True` and `deleted_at IS NULL`.
+    Eliminado de forma lógica (soft-delete) mediante "deleted_at"; "is_active" es un
+    interruptor independiente controlado por el administrador (un juego puede estar inactivo
+    sin estar eliminado, p. ej., retirado temporalmente de la venta). El catálogo público
+    (Fase 3) requiere tanto "is_active = True" como "deleted_at IS NULL".
     """
 
     __tablename__ = "games"
 
     id: int | None = Field(default=None, primary_key=True)
     title: str = Field(max_length=255, index=True)
-    slug: str = Field(unique=True, max_length=280, index=True)
+    slug: str = Field(unique=True, max_length=280, index=True)  # identificador publico en un URL
     description: str | None = Field(default=None, max_length=4000)
     developer: str | None = Field(default=None, max_length=255)
     publisher: str | None = Field(default=None, max_length=255)
     platform: str = Field(max_length=100, index=True)
     release_date: date | None = Field(default=None)
     base_price: Decimal = Field(max_digits=10, decimal_places=2)
-    is_active: bool = Field(default=True)
+    is_active: bool = Field(default=True)  #
     deleted_at: datetime | None = Field(default=None)
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)

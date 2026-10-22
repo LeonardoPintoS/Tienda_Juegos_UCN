@@ -21,7 +21,9 @@ class LibraryItem(SQLModel, table=True):
     """
 
     __tablename__ = "library_items"
-    __table_args__ = (UniqueConstraint("user_id", "game_id"),)
+    __table_args__ = (
+        UniqueConstraint("user_id", "game_id"),
+    )  # Declara unicidad entre ambas columnas, para que el usuario no compre un juego que ya compro
 
     id: int | None = Field(default=None, primary_key=True)
     user_id: int = Field(

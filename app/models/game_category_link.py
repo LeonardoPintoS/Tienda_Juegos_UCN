@@ -17,3 +17,7 @@ class GameCategoryLink(SQLModel, table=True):
     category_id: int = Field(
         sa_column=Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), primary_key=True)
     )
+
+
+# ondelete nos permite en caso de que se elimine un juego, eliminamos la asociacion de las
+# categorias que tenia ese juego, no queremos tener categorias asociadas o vinculo a algo que ya se elimino

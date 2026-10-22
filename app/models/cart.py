@@ -11,14 +11,16 @@ from app.core.time import utcnow
 
 
 class Cart(SQLModel, table=True):
-    """One cart per user (enforced by the unique `user_id`) or one per guest
-    session (identified by `session_token`).
+    """Un carrito por usuario (aplicado mediante el "user_id" único) o uno por
+    sesión de invitado (identificado por "session_token").
 
-    Exactly one of `user_id` / `session_token` must be set — enforced by a
-    CheckConstraint, not just at the service layer, so no cart can ever end
-    up unreachable by either the session or the account. In SQLite, NULLs
-    never collide with a unique constraint, so any number of guest carts
-    (user_id NULL) coexist fine alongside the one-per-user constraint.
+    Exactamente uno de "user_id" / "session_token" debe estar establecido —
+    aplicado mediante una CheckConstraint, no solo en la capa de servicio,
+    para que ningún carrito pueda quedar nunca inaccesible ni por la sesión
+    ni por la cuenta. En SQLite, los valores NULL nunca colisionan con una
+    restricción única, por lo que cualquier cantidad de carritos de invitados
+    (con user_id NULL) coexisten sin problemas junto a la restricción de uno
+    por usuario.
     """
 
     __tablename__ = "carts"
@@ -37,5 +39,6 @@ class Cart(SQLModel, table=True):
         ),
     )
     session_token: str | None = Field(default=None, unique=True, max_length=64, index=True)
+    # Auditoria
     created_at: datetime = Field(default_factory=utcnow)
     updated_at: datetime = Field(default_factory=utcnow)
