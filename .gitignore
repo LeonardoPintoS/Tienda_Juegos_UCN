@@ -8,7 +8,6 @@ __pycache__/
 # Variables de entorno secreto
 .env
 .env.local
-.env.example
 
 # Base de datos
 *.db
@@ -29,6 +28,6 @@ logs/
 Thumbs.db
 
 # Ruff y mypy cache
-__ruff_cache__/
+.ruff_cache/
 .mypy_cache/
 .pytest_cache/
