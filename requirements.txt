@@ -6,6 +6,7 @@ bcrypt==5.0.0
 cfgv==3.5.0
 click==8.5.0
 distlib==0.4.3
+email-validator==2.3.0
 fastapi==0.143.0
 filelock==4.1.0
 h11==0.16.0
@@ -21,10 +22,13 @@ pre_commit==4.6.2
 pydantic==2.14.0
 pydantic-settings==2.15.0
 pydantic_core==2.50.0
+PyJWT==2.15.1
 python-discovery==1.6.2
 python-dotenv==1.2.4
 PyYAML==6.0.3
+resend==2.50.1
 ruff==0.17.0
+slowapi==0.1.10
 SQLAlchemy==2.1.4
 sqlmodel==0.0.48
 starlette==1.7.0
