@@ -14,6 +14,12 @@ router = APIRouter(prefix="/admin/categories", tags=["admin-categories"])
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
+@router.get("", response_model=list[CategoryAdminRead])
+def list_categories(session: SessionDep, _admin: AdminUser) -> list[CategoryAdminRead]:
+    categories = admin_category_service.list_categories(session)
+    return [CategoryAdminRead.model_validate(c) for c in categories]
+
+
 @router.post("", response_model=CategoryAdminRead, status_code=status.HTTP_201_CREATED)
 def create_category(
     payload: CategoryCreate, session: SessionDep, _admin: AdminUser
