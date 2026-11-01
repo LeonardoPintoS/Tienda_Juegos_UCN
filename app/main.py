@@ -18,6 +18,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from app.core.config import settings
 from app.core.handlers import register_exception_handlers
 from app.core.rate_limit import limiter
+from app.routers.admin_categories import router as admin_categories_router
 from app.routers.auth import router as auth_router
 from app.routers.catalog import router as catalog_router
 
@@ -58,6 +59,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(catalog_router)
+app.include_router(admin_categories_router)
 
 
 @app.get("/health", tags=["health"])
