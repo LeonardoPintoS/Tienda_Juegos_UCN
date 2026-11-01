@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
 
 from app.core.database import get_session
-from app.schemas.category import categoryRead
+from app.schemas.category import CategoryRead
 from app.schemas.game import GameDetail, GameImageRead, GameListItem, GamePage, GameSort
 from app.services import catalog_service
 
@@ -86,19 +86,19 @@ def get_game(slug: str, session: SessionDep) -> GameDetail:
         discount_percent=detail.discount_percent,
         has_active_offer=detail.has_active_offer,
         images=[GameImageRead.model_validate(image) for image in detail.images],
-        categories=[categoryRead.model_validate(category) for category in detail.categories],
+        categories=[CategoryRead.model_validate(category) for category in detail.categories],
         rating_average=detail.rating_average,
         rating_count=detail.rating_count,
     )
 
 
-@router.get("/categories", response_model=list[categoryRead])
-def list_categories(session: SessionDep) -> list[categoryRead]:
+@router.get("/categories", response_model=list[CategoryRead])
+def list_categories(session: SessionDep) -> list[CategoryRead]:
     categories = catalog_service.list_categories(session)
-    return [categoryRead.model_validate(category) for category in categories]
+    return [CategoryRead.model_validate(category) for category in categories]
 
 
-@router.get("/categories/{slug}", response_model=categoryRead)
-def get_category(slug: str, session: SessionDep) -> categoryRead:
+@router.get("/categories/{slug}", response_model=CategoryRead)
+def get_category(slug: str, session: SessionDep) -> CategoryRead:
     category = catalog_service.get_category(session, slug=slug)
-    return categoryRead.model_validate(category)
+    return CategoryRead.model_validate(category)

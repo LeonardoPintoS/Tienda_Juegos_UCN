@@ -15,7 +15,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
-from app.schemas.category import categoryRead
+from app.schemas.category import CategoryRead
 
 
 class GameSort(StrEnum):
@@ -84,6 +84,6 @@ class GameDetail(BaseModel):
     discount_percent: int
     has_active_offer: bool
     images: list[GameImageRead]
-    categories: list[categoryRead]
+    categories: list[CategoryRead]
     rating_average: float | None
     rating_count: int
