@@ -5,7 +5,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
-from app.schemas.category import categoryRead
+from app.schemas.category import CategoryRead
 from app.schemas.game import GameImageRead
 
 _SLUG_PATTERN = r"^[a-z0-9]+(-[a-z0-9]+)*$"
@@ -69,5 +69,5 @@ class GameAdminDetail(BaseModel):
     deleted_at: datetime | None
     created_at: datetime
     updated_at: datetime
-    categories: list[categoryRead]
+    categories: list[CategoryRead]
     images: list[GameImageRead]

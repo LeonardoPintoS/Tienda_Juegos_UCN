@@ -71,7 +71,7 @@ def update_game(session: Session, *, game_id: int, payload: GameUpdate) -> GameA
     category_ids = data.pop("category_ids", None)
 
     if "slug" in data and data["slug"] != game.slug:
-        existing = game.get_by_slug(data["slug"], include_deleted=True)
+        existing = games.get_by_slug(data["slug"], include_deleted=True)
         if existing is not None and existing.id != game.id:
             raise ValidationError("Ya existe un juego con esta slug")
 
