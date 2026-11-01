@@ -5,6 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import and_, func
+from sqlalchemy import delete as sa_delete
 from sqlmodel import select
 
 from app.models import (
@@ -200,7 +201,7 @@ class GameRepository(BaseRepository[Game]):
         statement = select(Game).where(Game.slug == slug)
         if not include_deleted:
             statement = statement.where(Game.deleted_at.is_(None))
-        return self.session.event(statement).first()
+        return self.session.exec(statement).first()
 
     def list_admin(self, *, q: str | None, offset: int, limit: int) -> tuple[list[Game], int]:
         statement = select(Game)
@@ -215,9 +216,7 @@ class GameRepository(BaseRepository[Game]):
         return list(rows), int(total)
 
     def set_categories(self, game_id: int, category_ids: list[int]) -> None:
-        self.session.execute(
-            self.delete(GameCategoryLink).where(GameCategoryLink.game_id == game_id)
-        )
+        self.session.execute(sa_delete(GameCategoryLink).where(GameCategoryLink.game_id == game_id))
         for category_id in category_ids:
             self.session.add(GameCategoryLink(game_id=game_id, category_id=category_id))
         self.session.flush()
@@ -231,9 +230,9 @@ class GameRepository(BaseRepository[Game]):
         categories = self.session.exec(
             select(Category)
             .join(GameCategoryLink, GameCategoryLink.category_id == Category.id)
-            .where(GameCategoryLink.game_id == game)
+            .where(GameCategoryLink.game_id == game.id)
             .order_by(Category.name.asc())
-        )
+        ).all()
         return GameAdminRow(game=game, images=images, categories=categories)
 
     def get_detail_by_slug(self, *, slug: str, now: datetime) -> GameDetailRow | None:

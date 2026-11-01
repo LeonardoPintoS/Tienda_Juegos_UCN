@@ -99,3 +99,9 @@ def update_game(
 @router.delete("/{game_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_game(game_id: int, session: SessionDep, _admin: AdminUser) -> None:
     admin_game_service.soft_delete_game(session, game_id=game_id)
+
+
+@router.post("/{game_id}/restore", response_model=GameAdminDetail)
+def restore_game(game_id: int, session: SessionDep, _admin: AdminUser) -> GameAdminDetail:
+    row = admin_game_service.restore_game(session, game_id=game_id)
+    return _to_detail(row)

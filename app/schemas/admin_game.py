@@ -13,7 +13,7 @@ _SLUG_PATTERN = r"^[a-z0-9]+(-[a-z0-9]+)*$"
 
 class GameCreate(BaseModel):
     title: str = Field(min_length=1, max_length=255)
-    slug: str | None = Field(default=None, min_length=1, max_length=280, pattern=_SLUG_PATTERN)
+    slug: str = Field(min_length=1, max_length=280, pattern=_SLUG_PATTERN)
     description: str | None = Field(default=None, max_length=4000)
     developer: str | None = Field(default=None, max_length=255)
     publisher: str | None = Field(default=None, max_length=255)
@@ -25,7 +25,7 @@ class GameCreate(BaseModel):
 
 class GameUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
-    slug: str | Field(default=None, min_length=1, max_length=280, pattern=_SLUG_PATTERN)
+    slug: str | None = Field(default=None, min_length=1, max_length=280, pattern=_SLUG_PATTERN)
     description: str | None = Field(default=None, max_length=4000)
     developer: str | None = Field(default=None, max_length=255)
     publisher: str | None = Field(default=None, max_length=255)
@@ -48,7 +48,7 @@ class GameAdminListItem(BaseModel):
 
 
 class GameAdminPage(BaseModel):
-    iems: list[GameAdminListItem]
+    items: list[GameAdminListItem]
     page: int
     size: int
     total: int
