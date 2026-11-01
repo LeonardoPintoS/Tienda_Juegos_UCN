@@ -18,7 +18,7 @@ def _validate_category_ids(categories: CategoryRepository, category_ids: list[in
 
 
 def list_games(
-    session: Session, *, q: str | None, page: int, size, int
+    session: Session, *, q: str | None, page: int, size: int
 ) -> tuple[list[Game], int, int]:
     games = GameRepository(session)
     offset = (page - 1) * size
@@ -50,10 +50,13 @@ def create_game(session: Session, *, payload: GameCreate) -> GameAdminRow:
             developer=payload.developer,
             publisher=payload.publisher,
             platform=payload.platform,
-            release_fate=payload.release_date,
+            release_date=payload.release_date,
             base_price=payload.base_price,
         )
     )
+    games.set_categories(game.id, payload.category_ids)
+    session.commit()
+    session.refresh(game)
     return games.load_admin_row(game)
 
 
@@ -61,7 +64,7 @@ def update_game(session: Session, *, game_id: int, payload: GameUpdate) -> GameA
     games = GameRepository(session)
     categories = CategoryRepository(session)
     game = games.get(game_id, include_deleted=True)
-    if game in None:
+    if game is None:
         raise NotFoundError("Juego no encontrado")
 
     data = payload.model_dump(exclude_unset=True)
@@ -92,6 +95,20 @@ def soft_delete_game(session: Session, *, game_id: int) -> None:
     if game.deleted_at is not None:
         return
 
-    game.deleted_at = utcnow
+    game.deleted_at = utcnow()
     games.add(game)
     session.commit()
+
+
+def restore_game(session: Session, *, game_id: int) -> GameAdminRow:
+    games = GameRepository(session)
+    game = games.get(game_id, include_deleted=True)
+    if game is None:
+        raise NotFoundError("Juego no encontrado")
+    if game.deleted_at is not None:
+        game.deleted_at = None
+        game.updated_at = utcnow()
+        games.add(game)
+        session.commit()
+        session.refresh(game)
+    return games.load_admin_row(game)
