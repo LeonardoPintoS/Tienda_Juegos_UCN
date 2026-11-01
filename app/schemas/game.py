@@ -21,8 +21,8 @@ from app.schemas.category import categoryRead
 class GameSort(StrEnum):
     """Combinable-with-filters sort options for GET /games"""
 
-    TITTLE_ASC = "title_asc"
-    TITTLE_DESC = "title_desc"
+    TITLE_ASC = "title_asc"
+    TITLE_DESC = "title_desc"
     PRICE_ASC = "price_asc"
     PRICE_DESC = "price_desc"
     RELEASE_DATE_ASC = "release_date_asc"
@@ -49,7 +49,7 @@ class GameListItem(BaseModel):
     id: int
     title: str
     slug: str
-    plataform: str
+    platform: str
     release_date: date | None
     base_price: Decimal
     final_price: Decimal
@@ -77,7 +77,7 @@ class GameDetail(BaseModel):
     description: str | None
     developer: str | None
     publisher: str | None
-    plataform: str
+    platform: str
     release_date: date | None
     base_price: Decimal
     final_price: Decimal

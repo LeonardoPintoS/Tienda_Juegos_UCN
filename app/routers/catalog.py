@@ -29,7 +29,7 @@ def list_games(
     price_max: Annotated[Decimal | None, Query(ge=0)] = None,
     on_offer: bool | None = None,
     min_rating: Annotated[float | None, Query(ge=1, le=5)] = None,
-    sort: GameSort = GameSort.TITTLE_ASC,
+    sort: GameSort = GameSort.TITLE_ASC,
     page: Annotated[int, Query(ge=1)] = 1,
     size: Annotated[int, Query(ge=1, le=100)] = 20,
 ) -> GamePage:
@@ -90,3 +90,15 @@ def get_game(slug: str, session: SessionDep) -> GameDetail:
         rating_average=detail.rating_average,
         rating_count=detail.rating_count,
     )
+
+
+@router.get("/categories", response_model=list[categoryRead])
+def list_categories(session: SessionDep) -> list[categoryRead]:
+    categories = catalog_service.list_categories(session)
+    return [categoryRead.model_validate(category) for category in categories]
+
+
+@router.get("/categories/{slug}", response_model=categoryRead)
+def get_category(slug: str, session: SessionDep) -> categoryRead:
+    category = catalog_service.get_category(session, slug=slug)
+    return categoryRead.model_validate(category)

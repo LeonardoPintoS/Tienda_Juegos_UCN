@@ -134,7 +134,7 @@ class GameRepository(BaseRepository[Game]):
         )
 
         if q:
-            like_pattern = f"%{q}"
+            like_pattern = f"%{q}%"
             statement = statement.where(
                 Game.title.ilike(like_pattern) | Game.description.ilike(like_pattern)
             )
@@ -147,7 +147,7 @@ class GameRepository(BaseRepository[Game]):
         if price_max is not None:
             statement = statement.where(price_expr <= price_max)
         if on_offer is True:
-            statement = statement.where(Offer.id.is_not_(None))
+            statement = statement.where(Offer.id.is_not(None))
         if min_rating is not None:
             statement = statement.where(rating_subq.c.avg_rating >= min_rating)
         if categories:
@@ -162,8 +162,8 @@ class GameRepository(BaseRepository[Game]):
         total = self.session.execute(statement.with_only_columns(func.count(Game.id))).scalar_one()
 
         sort_map = {
-            GameSort.TITTLE_ASC: (Game.title.asc(),),
-            GameSort.TITTLE_DESC: (Game.title.desc(),),
+            GameSort.TITLE_ASC: (Game.title.asc(),),
+            GameSort.TITLE_DESC: (Game.title.desc(),),
             GameSort.PRICE_ASC: (price_expr.asc(),),
             GameSort.PRICE_DESC: (price_expr.desc(),),
             GameSort.RELEASE_DATE_ASC: (Game.release_date.asc(),),
@@ -187,7 +187,7 @@ class GameRepository(BaseRepository[Game]):
                     cover_image_url=cover_image_url,
                 )
             )
-            return summaries, int(total)
+        return summaries, int(total)
 
     def get_detail_by_slug(self, *, slug: str, now: datetime) -> GameDetailRow | None:
         game = self.session.exec(
