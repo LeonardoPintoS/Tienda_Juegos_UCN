@@ -23,10 +23,15 @@ from app.repositories.base import BaseRepository
 def active_offer_clause(now: datetime) -> ColumnElement[bool]:
     """SQLAlchemy boolean clause: is an Offer row live at `now`?
 
-    Vigency requires all three: the admin's manual switch is on, and `now`
-    falls inside [starts_at, ends_at].
+    Vigency requires the admin's manual switch on, the offer not
+    soft-deleted, and `now` inside [starts_at, ends_at].
     """
-    return Offer.is_active.is_(True) & (Offer.starts_at <= now) & (Offer.ends_at >= now)
+    return (
+        Offer.is_active.is_(True)
+        & Offer.deleted_at.is_(None)
+        & (Offer.starts_at <= now)
+        & (Offer.ends_at >= now)
+    )
 
 
 def get_active_offer_for_game(session: Session, game_id: int, now: datetime) -> Offer | None:
@@ -55,7 +60,7 @@ class OfferRepository(BaseRepository[Offer]):
     model = Offer
 
     def list_all(self, *, game_id: int | None = None) -> list[Offer]:
-        statement = select(Offer).order_by(Offer.starts_at.desc())
+        statement = select(Offer).where(Offer.deleted_at.is_(None)).order_by(Offer.starts_at.desc())
         if game_id is not None:
             statement = statement.where(Offer.game_id == game_id)
         return list(self.session.exec(statement).all())
@@ -86,6 +91,7 @@ class OfferRepository(BaseRepository[Offer]):
         statement = select(Offer).where(
             Offer.game_id == game_id,
             Offer.is_active.is_(True),
+            Offer.deleted_at.is_(None),
             Offer.starts_at <= ends_at,
             Offer.ends_at >= starts_at,
         )

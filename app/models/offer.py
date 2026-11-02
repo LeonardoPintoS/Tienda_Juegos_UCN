@@ -36,3 +36,4 @@ class Offer(SQLModel, table=True):
     starts_at: datetime
     ends_at: datetime
     is_active: bool = Field(default=True)
+    deleted_at: datetime | None = Field(default=None)
