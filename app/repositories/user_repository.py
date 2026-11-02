@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import case, update
+from sqlalchemy import case, func, update
 from sqlmodel import select
 
 from app.models import User
@@ -76,3 +76,19 @@ class UserRepository(BaseRepository[User]):
             .values(is_verified=True, verification_attempts=0, verification_blocked_until=None),
             execution_options={"synchronize_session": False},
         )
+
+    def list_page(self, *, q: str | None, offset: int, limit: int) -> tuple[list[User], int]:
+        """One page of users (newest first) plus the total count, optionally
+        filtered by email or name. `q` travels as a bound parameter, never
+        concatenated into the SQL.
+        """
+        statement = select(User)
+        if q:
+            pattern = f"%{q}%"
+            statement = statement.where(User.email.ilike(pattern) | User.full_name.ilike(pattern))
+
+        total = self.session.execute(statement.with_only_columns(func.count(User.id))).scalar_one()
+        rows = self.session.exec(
+            statement.order_by(User.created_at.desc(), User.id.desc()).offset(offset).limit(limit)
+        ).all()
+        return list(rows), int(total)
